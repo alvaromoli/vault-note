@@ -1,0 +1,68 @@
+.locked-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.locked-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.locked-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vault-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.locked-header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.locked-header p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.locked-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.warning-box {
+  background-color: rgba(226, 88, 88, 0.1);
+  border: 1px solid rgba(226, 88, 88, 0.3);
+  color: #ffb4b4;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.error-message {
+  color: var(--danger);
+  background-color: rgba(226, 88, 88, 0.1);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  text-align: center;
+}

@@ -1,0 +1,76 @@
+# VaultNote
+
+VaultNote is a highly secure, offline-first, local desktop application for managing your notes, books, and credentials. It is built with a focus on strong cryptography and privacy.
+
+## Features
+- **Zero-Knowledge Architecture**: Your master password is never stored. All data is encrypted locally using AES-256-GCM.
+- **Books & Notes**: Organize your thoughts hierarchically.
+- **Secrets Manager**: Store your passwords and credentials securely with an integrated password generator and 30-second clipboard auto-clear.
+- **Auto-Lock**: Automatically locks your vault after 5 minutes of inactivity.
+- **Modern UI**: Dark mode, glassmorphism, and a distraction-free environment.
+
+## Tech Stack
+- **Backend**: Rust (Tauri framework)
+- **Frontend**: React + TypeScript + Vite
+- **Database**: SQLite (via `rusqlite`)
+- **Cryptography**: `argon2` (Argon2id), `aes-gcm` (AES-256-GCM), `zeroize`.
+
+## Development
+
+### Prerequisites
+- [Node.js](https://nodejs.org/)
+- [Rust](https://rustup.rs/)
+
+### Setup
+1. Clone the repository.
+2. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the application in development mode:
+   ```bash
+   npm run tauri dev
+   ```
+
+### Security
+For details on the cryptographic implementation and threat model, please refer to [SECURITY.md](SECURITY.md).
+
+---
+*(Traducción al Español)*
+
+# VaultNote
+
+VaultNote es una aplicación de escritorio local, orientada a la privacidad y altamente segura, diseñada para administrar tus notas, libros y credenciales. Está construida con un fuerte enfoque en criptografía robusta.
+
+## Características
+- **Arquitectura de Conocimiento Cero (Zero-Knowledge)**: Tu contraseña maestra nunca se almacena. Todos los datos se cifran localmente usando AES-256-GCM.
+- **Libros y Notas**: Organiza tus pensamientos jerárquicamente.
+- **Gestor de Secretos**: Almacena tus contraseñas y credenciales de forma segura con un generador integrado y limpieza automática del portapapeles tras 30 segundos.
+- **Bloqueo Automático**: Bloquea tu bóveda automáticamente después de 5 minutos de inactividad.
+- **Interfaz Moderna**: Modo oscuro, diseño "glassmorphism" y un entorno libre de distracciones.
+
+## Tecnologías Utilizadas
+- **Backend**: Rust (Framework Tauri)
+- **Frontend**: React + TypeScript + Vite
+- **Base de Datos**: SQLite (mediante `rusqlite`)
+- **Criptografía**: `argon2` (Argon2id), `aes-gcm` (AES-256-GCM), `zeroize`.
+
+## Desarrollo
+
+### Prerrequisitos
+- [Node.js](https://nodejs.org/)
+- [Rust](https://rustup.rs/)
+
+### Instalación
+1. Clona el repositorio.
+2. Instala las dependencias del frontend:
+   ```bash
+   npm install
+   ```
+3. Ejecuta la aplicación en modo desarrollo:
+   ```bash
+   npm run tauri dev
+   ```
+
+### Seguridad
+Para más detalles sobre la implementación criptográfica y el modelo de amenazas, por favor consulta [SECURITY.md](SECURITY.md).

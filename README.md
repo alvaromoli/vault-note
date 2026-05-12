@@ -15,6 +15,18 @@ Official pre-compiled versions are available in the **Releases** section:
 - **Auto-Lock**: Automatically locks your vault after 5 minutes of inactivity.
 - **Modern UI**: Dark mode, glassmorphism, and a distraction-free environment.
 
+## 📝 Markdown Guide
+
+Use the following syntax to format your notes:
+- `# Header 1` to `### Header 3`
+- `**bold**`, `*italic*`, `~~strikethrough~~`
+- `[Link Title](https://url.com)`
+- `- item` for lists or `- [ ] task` for checklists
+- ` ```rust ` code blocks
+- `> Quote` for citations
+
+---
+
 ## Tech Stack
 - **Backend**: Rust (Tauri framework)
 - **Frontend**: React + TypeScript + Vite
@@ -60,6 +72,18 @@ Las versiones oficiales pre-compiladas están disponibles en la sección de **Re
 - **Gestor de Secretos**: Almacena tus contraseñas y credenciales de forma segura con un generador integrado y limpieza automática del portapapeles tras 30 segundos.
 - **Bloqueo Automático**: Bloquea tu bóveda automáticamente después de 5 minutos de inactividad.
 - **Interfaz Moderna**: Modo oscuro, diseño "glassmorphism" y un entorno libre de distracciones.
+
+## 📝 Guía de Markdown
+
+Usa la siguiente sintaxis para dar formato a tus notas:
+- `# Título 1` hasta `### Título 3`
+- `**negrita**`, `*cursiva*`, `~~tachado~~`
+- `[Título del Link](https://url.com)`
+- `- elemento` para listas o `- [ ] tarea` para checklists
+- ` ```rust ` bloques de código
+- `> Cita` para menciones
+
+---
 
 ## Tecnologías Utilizadas
 - **Backend**: Rust (Framework Tauri)

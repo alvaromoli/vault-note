@@ -3,6 +3,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { NotesView } from './NotesView';
 import { SecretsView } from './SecretsView';
 import { SettingsView } from './SettingsView';
+import { TrashView } from './TrashView';
 import { useLanguage } from '../i18n';
 import './UnlockedView.css';
 
@@ -10,7 +11,7 @@ interface UnlockedViewProps {
   onLock: () => void;
 }
 
-type Tab = 'notes' | 'secrets' | 'settings';
+type Tab = 'notes' | 'secrets' | 'settings' | 'trash';
 
 export function UnlockedView({ onLock }: UnlockedViewProps) {
   const [activeTab, setActiveTab] = useState<Tab>('notes');
@@ -53,6 +54,12 @@ export function UnlockedView({ onLock }: UnlockedViewProps) {
           >
             {t('sidebar_settings')}
           </button>
+          <button 
+            className={`nav-item ${activeTab === 'trash' ? 'active' : ''}`}
+            onClick={() => setActiveTab('trash')}
+          >
+            {t('sidebar_trash')}
+          </button>
         </div>
       </aside>
       
@@ -60,6 +67,7 @@ export function UnlockedView({ onLock }: UnlockedViewProps) {
         {activeTab === 'notes' && <NotesView />}
         {activeTab === 'secrets' && <SecretsView />}
         {activeTab === 'settings' && <SettingsView />}
+        {activeTab === 'trash' && <TrashView />}
       </main>
     </div>
   );

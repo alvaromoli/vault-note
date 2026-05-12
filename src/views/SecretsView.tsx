@@ -83,11 +83,11 @@ export function SecretsView() {
     if (!confirm(t('confirm_delete_secret'))) return;
     
     try {
-      await invoke('delete_item', { id: selectedSecret.id });
+      await invoke('trash_item', { id: selectedSecret.id });
       setSecrets(secrets.filter(s => s.id !== selectedSecret.id));
       setSelectedSecret(null);
     } catch (e) {
-      console.error('Error deleting secret', e);
+      console.error('Error trashing secret', e);
     }
   };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { LockedView } from "./views/LockedView";
 import { UnlockedView } from "./views/UnlockedView";
@@ -6,25 +6,33 @@ import { UnlockedView } from "./views/UnlockedView";
 function App() {
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [isChecking, setIsChecking] = useState<boolean>(true);
-  const [timeoutId, setTimeoutId] = useState<number | null>(null);
+  const timerRef = useRef<number | null>(null);
+
+  const lockVault = useCallback(async () => {
+    try {
+      await invoke('lock_vault');
+      setIsLocked(true);
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    } catch (e) {
+      console.error("Error locking from timer:", e);
+    }
+  }, []);
+
+  const resetTimeout = useCallback(() => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    
+    // Solo poner el timer si NO está bloqueado
+    if (!isLocked) {
+      timerRef.current = window.setTimeout(lockVault, 5 * 60 * 1000);
+    }
+  }, [isLocked, lockVault]);
 
   useEffect(() => {
     checkLockStatus();
   }, []);
-
-  const resetTimeout = () => {
-    if (timeoutId) window.clearTimeout(timeoutId);
-    // Bloquear después de 5 minutos de inactividad
-    const id = window.setTimeout(async () => {
-      try {
-        await invoke('lock_vault');
-        setIsLocked(true);
-      } catch (e) {
-        console.error(e);
-      }
-    }, 5 * 60 * 1000);
-    setTimeoutId(id);
-  };
 
   useEffect(() => {
     if (!isLocked) {
@@ -35,11 +43,17 @@ function App() {
       events.forEach(e => window.addEventListener(e, handleActivity));
       
       return () => {
-        if (timeoutId) window.clearTimeout(timeoutId);
+        if (timerRef.current) window.clearTimeout(timerRef.current);
         events.forEach(e => window.removeEventListener(e, handleActivity));
       };
+    } else {
+      // Si se bloquea, limpiar cualquier timer pendiente
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     }
-  }, [isLocked]);
+  }, [isLocked, resetTimeout]);
 
   const checkLockStatus = async () => {
     try {
@@ -53,6 +67,10 @@ function App() {
     }
   };
 
+  const handleManualLock = async () => {
+    await lockVault();
+  };
+
   if (isChecking) {
     return <div className="locked-container">Iniciando...</div>;
   }
@@ -60,9 +78,13 @@ function App() {
   return (
     <>
       {isLocked ? (
-        <LockedView onUnlock={() => setIsLocked(false)} />
+        <LockedView onUnlock={() => {
+          setIsLocked(false);
+          // Al desbloquear, reiniciamos el timer inmediatamente
+          resetTimeout();
+        }} />
       ) : (
-        <UnlockedView onLock={() => setIsLocked(true)} />
+        <UnlockedView onLock={handleManualLock} />
       )}
     </>
   );

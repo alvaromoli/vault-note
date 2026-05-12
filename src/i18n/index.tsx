@@ -23,6 +23,7 @@ export const translations: Translations = {
   sidebar_books: { es: '📚 Libros y Notas', en: '📚 Books and Notes' },
   sidebar_secrets: { es: '🔑 Secretos', en: '🔑 Secrets' },
   sidebar_settings: { es: '⚙️ Configuración', en: '⚙️ Settings' },
+  sidebar_trash: { es: '🗑️ Papelera', en: '🗑️ Trash' },
   lock_vault_tooltip: { es: 'Bloquear Bóveda', en: 'Lock Vault' },
   
   // NotesView
@@ -36,8 +37,13 @@ export const translations: Translations = {
   note_content_placeholder: { es: 'Escribe tu nota aquí...', en: 'Write your note here...' },
   save_changes: { es: 'Guardar Cambios', en: 'Save Changes' },
   delete: { es: 'Eliminar', en: 'Delete' },
-  confirm_delete_note: { es: '¿Estás seguro de que deseas eliminar esta nota?', en: 'Are you sure you want to delete this note?' },
-  confirm_delete_book: { es: '¿Estás seguro de que deseas eliminar este libro y TODAS sus notas?', en: 'Are you sure you want to delete this book and ALL its notes?' },
+  confirm_delete_note: { es: '¿Estás seguro de que deseas mover esta nota a la papelera?', en: 'Are you sure you want to move this note to trash?' },
+  confirm_delete_book: { es: '¿Estás seguro de que deseas mover este libro y todas sus notas a la papelera?', en: 'Are you sure you want to move this book and all its notes to trash?' },
+  
+  // Markdown Editor
+  edit_mode: { es: 'Editar', en: 'Edit' },
+  preview_mode: { es: 'Vista Previa', en: 'Preview' },
+  split_mode: { es: 'Dividido', en: 'Split' },
   
   // SecretsView
   credentials_title: { es: 'Credenciales', en: 'Credentials' },
@@ -75,6 +81,19 @@ export const translations: Translations = {
   password_length_error: { es: 'La contraseña debe tener al menos 8 caracteres.', en: 'Password must be at least 8 characters long.' },
   password_match_error: { es: 'Las contraseñas no coinciden.', en: 'Passwords do not match.' },
   password_change_success: { es: 'Contraseña maestra cambiada exitosamente.', en: 'Master password changed successfully.' },
+  
+  // Trash
+  trash_title: { es: 'Papelera de Reciclaje', en: 'Recycle Bin' },
+  trash_empty: { es: 'La papelera está vacía', en: 'Trash is empty' },
+  restore_btn: { es: 'Restaurar', en: 'Restore' },
+  delete_perm_btn: { es: 'Eliminar Permanentemente', en: 'Delete Permanently' },
+  confirm_delete_perm: { es: '¿Estás seguro? Esta acción no se puede deshacer.', en: 'Are you sure? This action cannot be undone.' },
+  item_restored: { es: 'Elemento restaurado.', en: 'Item restored.' },
+  item_deleted_perm: { es: 'Elemento eliminado permanentemente.', en: 'Item permanently deleted.' },
+  
+  // Auto-save
+  saving_status: { es: 'Guardando...', en: 'Saving...' },
+  saved_status: { es: 'Guardado', en: 'Saved' },
   
 };
 

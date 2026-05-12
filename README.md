@@ -2,6 +2,12 @@
 
 VaultNote is a highly secure, offline-first, local desktop application for managing your notes, books, and credentials. It is built with a focus on strong cryptography and privacy.
 
+## 🚀 Downloads
+
+Official pre-compiled versions are available in the **Releases** section:
+- **Installer (.msi)**: Recommended for a full installation on Windows.
+- **Portable (.exe)**: Run it directly without installation.
+
 ## Features
 - **Zero-Knowledge Architecture**: Your master password is never stored. All data is encrypted locally using AES-256-GCM.
 - **Books & Notes**: Organize your thoughts hierarchically.
@@ -42,6 +48,12 @@ For details on the cryptographic implementation and threat model, please refer t
 
 VaultNote es una aplicación de escritorio local, orientada a la privacidad y altamente segura, diseñada para administrar tus notas, libros y credenciales. Está construida con un fuerte enfoque en criptografía robusta.
 
+## 🚀 Descargas
+
+Las versiones oficiales pre-compiladas están disponibles en la sección de **Releases**:
+- **Instalador (.msi)**: Recomendado para una instalación completa en Windows.
+- **Versión Portable (.exe)**: Ejecútalo directamente sin necesidad de instalación.
+
 ## Características
 - **Arquitectura de Conocimiento Cero (Zero-Knowledge)**: Tu contraseña maestra nunca se almacena. Todos los datos se cifran localmente usando AES-256-GCM.
 - **Libros y Notas**: Organiza tus pensamientos jerárquicamente.
@@ -74,3 +86,15 @@ VaultNote es una aplicación de escritorio local, orientada a la privacidad y al
 
 ### Seguridad
 Para más detalles sobre la implementación criptográfica y el modelo de amenazas, por favor consulta [SECURITY.md](SECURITY.md).
+
+---
+
+## 📜 Version History / Historial de Versiones
+
+### [v0.1.0] - 2026-05-12
+**Added / Añadido:**
+- **Markdown Support**: Rich text editing with split-view and code highlighting. / Soporte para Markdown con vista dividida y resaltado de código.
+- **Trash Bin**: Soft-delete system for notes and secrets. / Papelera de reciclaje para notas y secretos.
+- **Auto-save**: Real-time saving to prevent data loss. / Auto-guardado en tiempo real.
+- **Auto-lock Improvements**: Fixed inactivity timer and lock loops. / Mejoras en el bloqueo por inactividad.
+- **UI/UX Polish**: Enhanced glassmorphism styles and animations. / Mejoras visuales en estilos y animaciones.

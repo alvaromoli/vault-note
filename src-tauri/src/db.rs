@@ -27,11 +27,17 @@ impl Db {
                 item_type TEXT NOT NULL, -- 'book', 'note', 'credential'
                 parent_id TEXT,          -- para relacionar notas con libros
                 encrypted_blob BLOB NOT NULL, -- JSON cifrado
+                is_deleted INTEGER DEFAULT 0,
+                deleted_at DATETIME,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )",
             [],
         )?;
+
+        // Asegurar que las columnas existan en DBs ya creadas
+        let _ = conn.execute("ALTER TABLE encrypted_items ADD COLUMN is_deleted INTEGER DEFAULT 0", []);
+        let _ = conn.execute("ALTER TABLE encrypted_items ADD COLUMN deleted_at DATETIME", []);
 
         conn.execute(
             "CREATE TABLE IF NOT EXISTS settings (

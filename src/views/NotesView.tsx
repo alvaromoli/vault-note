@@ -1,7 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import type { Book, Note } from '../types';
 import { useLanguage } from '../i18n';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './NotesView.css';
 
 export function NotesView() {
@@ -9,11 +13,62 @@ export function NotesView() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [editorMode, setEditorMode] = useState<'edit' | 'preview' | 'split'>('split');
   const { t } = useLanguage();
+  
+  // Ref para tener siempre la versión más reciente en el timeout
+  const selectedNoteRef = useRef<Note | null>(null);
+  useEffect(() => {
+    selectedNoteRef.current = selectedNote;
+  }, [selectedNote]);
 
   useEffect(() => {
     loadBooks();
   }, []);
+
+  // Auto-save effect
+  useEffect(() => {
+    if (!selectedNote || !selectedNote.id) return;
+
+    const timeout = setTimeout(() => {
+      handleAutoSave();
+    }, 500); // Reducido a 500ms para mayor seguridad
+
+    return () => clearTimeout(timeout);
+  }, [selectedNote?.title, selectedNote?.content]);
+
+  const handleAutoSave = async () => {
+    const noteToSave = selectedNoteRef.current;
+    if (!noteToSave || !noteToSave.id) return;
+    
+    setSaveStatus('saving');
+    try {
+      const payloadObj = { 
+        ...noteToSave,
+        updatedAt: Date.now() 
+      };
+      const id = payloadObj.id;
+      delete (payloadObj as any).id;
+      
+      await invoke('update_item', { 
+        id: id,
+        payload: JSON.stringify(payloadObj)
+      });
+
+      // Actualizamos primero la lista y luego el estado de "guardado"
+      const updatedNote = { ...noteToSave, id };
+      setNotes(prev => prev.map(n => n.id === id ? updatedNote : n));
+      
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 1500);
+    } catch (e) {
+      console.error('CRITICAL: Error auto-saving note', e);
+      setSaveStatus('idle');
+      // Si falla el auto-guardado, mostramos una alerta para no perder datos
+      alert("Error al guardar la nota automáticamente: " + e);
+    }
+  };
 
   const loadBooks = async () => {
     try {
@@ -88,43 +143,20 @@ export function NotesView() {
   };
 
   const handleSaveNote = async () => {
-    if (!selectedNote || !selectedNote.id) return;
-    
-    try {
-      selectedNote.updatedAt = Date.now();
-      // Remove id before saving to payload to avoid duplication, though it's overwritten by DB id
-      const payloadObj = { ...selectedNote };
-      delete payloadObj.id;
-      
-      // Delete old and save new since we don't have an update command (or we can just make an update command)
-      // Actually, my backend save_item inserts a new UUID. I should add update_item to the backend!
-      // Let's assume we implement update_item shortly.
-      await invoke('delete_item', { id: selectedNote.id });
-      const newId = await invoke<string>('save_item', { 
-        itemType: 'note',
-        parentId: selectedNote.bookId,
-        payload: JSON.stringify(payloadObj)
-      });
-      
-      // Update local state
-      const updatedNote = { ...selectedNote, id: newId };
-      setNotes(notes.map(n => n.id === selectedNote.id ? updatedNote : n));
-      setSelectedNote(updatedNote);
-    } catch (e) {
-      console.error('Error saving note', e);
-    }
+    // Already handled by auto-save, but keeping it for manual force save if needed
+    await handleAutoSave();
   };
 
   const handleDeleteNote = async () => {
     if (!selectedNote || !selectedNote.id) return;
-    if (!confirm('¿Estás seguro de que deseas eliminar esta nota?')) return;
+    if (!confirm(t('confirm_delete_note'))) return;
     
     try {
-      await invoke('delete_item', { id: selectedNote.id });
+      await invoke('trash_item', { id: selectedNote.id });
       setNotes(notes.filter(n => n.id !== selectedNote.id));
       setSelectedNote(null);
     } catch (e) {
-      console.error('Error deleting note', e);
+      console.error('Error trashing note', e);
     }
   };
 
@@ -133,19 +165,21 @@ export function NotesView() {
     if (!confirm(t('confirm_delete_book'))) return;
     
     try {
+      // Trash all notes in the book
       for (const note of notes) {
         if (note.id) {
-          await invoke('delete_item', { id: note.id });
+          await invoke('trash_item', { id: note.id });
         }
       }
-      await invoke('delete_item', { id: selectedBook.id });
+      // Trash the book itself
+      await invoke('trash_item', { id: selectedBook.id });
       
       setBooks(books.filter(b => b.id !== selectedBook.id));
       setSelectedBook(null);
       setNotes([]);
       setSelectedNote(null);
     } catch (e) {
-      console.error('Error deleting book', e);
+      console.error('Error trashing book', e);
     }
   };
 
@@ -202,19 +236,80 @@ export function NotesView() {
       <div className="editor-panel glass-panel">
         {selectedNote ? (
           <div className="editor-container animate-fade-in">
-            <input 
-              className="note-title-input" 
-              value={selectedNote.title}
-              onChange={e => setSelectedNote({...selectedNote, title: e.target.value})}
-              placeholder={t('note_title_placeholder')}
-            />
-            <textarea 
-              className="note-content-input"
-              value={selectedNote.content}
-              onChange={e => setSelectedNote({...selectedNote, content: e.target.value})}
-              placeholder={t('note_content_placeholder')}
-            />
+            <div className="editor-header">
+              <input 
+                className="note-title-input" 
+                value={selectedNote.title}
+                onChange={e => setSelectedNote({...selectedNote, title: e.target.value})}
+                placeholder={t('note_title_placeholder')}
+              />
+              <div className="mode-toggle">
+                <button 
+                  className={editorMode === 'edit' ? 'active' : ''} 
+                  onClick={() => setEditorMode('edit')}
+                >
+                  {t('edit_mode')}
+                </button>
+                <button 
+                  className={editorMode === 'split' ? 'active' : ''} 
+                  onClick={() => setEditorMode('split')}
+                >
+                  {t('split_mode')}
+                </button>
+                <button 
+                  className={editorMode === 'preview' ? 'active' : ''} 
+                  onClick={() => setEditorMode('preview')}
+                >
+                  {t('preview_mode')}
+                </button>
+              </div>
+            </div>
+
+            <div className={`editor-body ${editorMode}`}>
+              {(editorMode === 'edit' || editorMode === 'split') && (
+                <textarea 
+                  className="note-content-input"
+                  value={selectedNote.content}
+                  onChange={e => setSelectedNote({...selectedNote, content: e.target.value})}
+                  placeholder={t('note_content_placeholder')}
+                />
+              )}
+              
+              {(editorMode === 'preview' || editorMode === 'split') && (
+                <div className="markdown-preview">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({node, inline, className, children, ...props}: any) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return !inline && match ? (
+                          <SyntaxHighlighter
+                            style={vscDarkPlus as any}
+                            language={match[1]}
+                            PreTag="div"
+                            {...props}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code className={className} {...props}>
+                            {children}
+                          </code>
+                        );
+                      }
+                    }}
+                  >
+                    {selectedNote.content}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </div>
+
             <div className="editor-actions">
+              <div className="save-status">
+                {saveStatus === 'saving' && <span className="status-saving">● {t('saving_status')}</span>}
+                {saveStatus === 'saved' && <span className="status-saved">✓ {t('saved_status')}</span>}
+              </div>
               <button className="btn-danger" onClick={handleDeleteNote}>{t('delete')}</button>
               <button onClick={handleSaveNote}>{t('save_changes')}</button>
             </div>

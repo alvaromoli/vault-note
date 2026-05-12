@@ -1,6 +1,5 @@
 use crate::crypto;
 use crate::db::Db;
-use crate::models::VaultMetadata;
 use crate::state::AppState;
 use rusqlite::params;
 use tauri::State;
@@ -135,7 +134,7 @@ pub fn get_items(
     let db = db_state.lock().unwrap();
     let conn = db.get_connection();
     
-    let mut stmt = conn.prepare("SELECT id, encrypted_blob FROM encrypted_items WHERE item_type = ?1")
+    let mut stmt = conn.prepare("SELECT id, encrypted_blob FROM encrypted_items WHERE item_type = ?1 AND (is_deleted = 0 OR is_deleted IS NULL)")
         .map_err(|e| e.to_string())?;
         
     let item_iter = stmt.query_map(params![item_type], |row| {
@@ -175,6 +174,111 @@ pub fn delete_item(
         .map_err(|e| e.to_string())?;
         
     Ok(())
+}
+
+#[tauri::command]
+pub fn update_item(
+    id: String,
+    payload: String,
+    db_state: State<'_, Mutex<Db>>,
+    app_state: State<'_, AppState>,
+) -> Result<(), String> {
+    let dek_guard = app_state.dek.lock().unwrap();
+    let dek = dek_guard.as_ref().ok_or("Bóveda bloqueada")?;
+
+    let encrypted_blob = crypto::encrypt_payload(payload.as_bytes(), &dek)
+        .map_err(|e| e.to_string())?;
+
+    let db = db_state.lock().unwrap();
+    let conn = db.get_connection();
+    
+    let rows_affected = conn.execute(
+        "UPDATE encrypted_items SET encrypted_blob = ?1, updated_at = CURRENT_TIMESTAMP WHERE id = ?2",
+        params![encrypted_blob, id],
+    ).map_err(|e| e.to_string())?;
+
+    if rows_affected == 0 {
+        return Err("No se encontró la nota para actualizar (ID inválido)".to_string());
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
+pub fn trash_item(
+    id: String,
+    db_state: State<'_, Mutex<Db>>,
+    app_state: State<'_, AppState>,
+) -> Result<(), String> {
+    if !app_state.is_unlocked() {
+        return Err("Bóveda bloqueada".to_string());
+    }
+
+    let db = db_state.lock().unwrap();
+    let conn = db.get_connection();
+    
+    conn.execute(
+        "UPDATE encrypted_items SET is_deleted = 1, deleted_at = CURRENT_TIMESTAMP WHERE id = ?1", 
+        params![id]
+    ).map_err(|e| e.to_string())?;
+        
+    Ok(())
+}
+
+#[tauri::command]
+pub fn restore_item(
+    id: String,
+    db_state: State<'_, Mutex<Db>>,
+    app_state: State<'_, AppState>,
+) -> Result<(), String> {
+    if !app_state.is_unlocked() {
+        return Err("Bóveda bloqueada".to_string());
+    }
+
+    let db = db_state.lock().unwrap();
+    let conn = db.get_connection();
+    
+    conn.execute(
+        "UPDATE encrypted_items SET is_deleted = 0, deleted_at = NULL WHERE id = ?1", 
+        params![id]
+    ).map_err(|e| e.to_string())?;
+        
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_trashed_items(
+    db_state: State<'_, Mutex<Db>>,
+    app_state: State<'_, AppState>,
+) -> Result<Vec<(String, String, String)>, String> {
+    let dek_guard = app_state.dek.lock().unwrap();
+    let dek = dek_guard.as_ref().ok_or("Bóveda bloqueada")?;
+
+    let db = db_state.lock().unwrap();
+    let conn = db.get_connection();
+    
+    let mut stmt = conn.prepare("SELECT id, item_type, encrypted_blob FROM encrypted_items WHERE is_deleted = 1")
+        .map_err(|e| e.to_string())?;
+        
+    let item_iter = stmt.query_map([], |row| {
+        let id: String = row.get(0)?;
+        let item_type: String = row.get(1)?;
+        let blob: Vec<u8> = row.get(2)?;
+        Ok((id, item_type, blob))
+    }).map_err(|e| e.to_string())?;
+
+    let mut result = Vec::new();
+    for item in item_iter {
+        if let Ok((id, item_type, blob)) = item {
+            if let Ok(decrypted) = crypto::decrypt_payload(&blob, &dek) {
+                if let Ok(json_str) = String::from_utf8(decrypted) {
+                    result.push((id, item_type, json_str));
+                }
+            }
+        }
+    }
+
+    Ok(result)
 }
 
 #[tauri::command]

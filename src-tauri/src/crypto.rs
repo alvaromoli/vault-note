@@ -40,7 +40,7 @@ pub fn generate_salt() -> [u8; SALT_LEN] {
 
 /// Deriva la Key Encryption Key (KEK) usando Argon2id
 pub fn derive_kek(password: &str, salt: &[u8]) -> Result<Zeroizing<Vec<u8>>, CryptoError> {
-    let argon2 = Argon2::default();
+    let _argon2 = Argon2::default();
     
     // Argon2 produce un hash en formato string, pero queremos el output crudo (32 bytes para AES-256)
     let mut kek = vec![0u8; 32];

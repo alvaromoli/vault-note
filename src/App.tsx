@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { LockedView } from "./views/LockedView";
-import { UnlockedView } from "./views/UnlockedView";
+import { AppShell } from "./components/AppShell";
 
 function App() {
   const [isLocked, setIsLocked] = useState<boolean>(true);
@@ -24,7 +23,6 @@ function App() {
   const resetTimeout = useCallback(() => {
     if (timerRef.current) window.clearTimeout(timerRef.current);
     
-    // Solo poner el timer si NO está bloqueado
     if (!isLocked) {
       timerRef.current = window.setTimeout(lockVault, 5 * 60 * 1000);
     }
@@ -47,7 +45,6 @@ function App() {
         events.forEach(e => window.removeEventListener(e, handleActivity));
       };
     } else {
-      // Si se bloquea, limpiar cualquier timer pendiente
       if (timerRef.current) {
         window.clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -76,17 +73,14 @@ function App() {
   }
 
   return (
-    <>
-      {isLocked ? (
-        <LockedView onUnlock={() => {
-          setIsLocked(false);
-          // Al desbloquear, reiniciamos el timer inmediatamente
-          resetTimeout();
-        }} />
-      ) : (
-        <UnlockedView onLock={handleManualLock} />
-      )}
-    </>
+    <AppShell 
+      isLocked={isLocked} 
+      onLock={handleManualLock} 
+      onUnlock={() => {
+        setIsLocked(false);
+        resetTimeout();
+      }} 
+    />
   );
 }
 

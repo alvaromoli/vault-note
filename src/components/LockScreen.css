@@ -1,0 +1,90 @@
+.lock-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lock-screen-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.lock-icon {
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.lock-screen-card h2 {
+  margin: 0 0 12px 0;
+  color: var(--text);
+}
+
+.lock-screen-card p {
+  color: var(--text-h);
+  font-size: 14px;
+  margin: 0 0 30px 0;
+}
+
+.master-password-input {
+  width: 100%;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.master-password-input:focus {
+  border-color: var(--accent);
+}
+
+.unlock-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.unlock-btn:hover {
+  opacity: 0.9;
+}
+
+.unlock-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-msg {
+  color: #ef4444 !important;
+  font-size: 13px !important;
+  margin-top: -10px !important;
+  margin-bottom: 20px !important;
+}

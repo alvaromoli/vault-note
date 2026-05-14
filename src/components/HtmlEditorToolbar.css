@@ -1,0 +1,65 @@
+.html-editor-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--border);
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.html-editor-toolbar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-h);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.html-editor-toolbar button:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  color: var(--text);
+}
+
+.html-editor-toolbar button.is-active {
+  background-color: rgba(62, 166, 255, 0.15);
+  color: var(--accent);
+}
+
+.html-editor-toolbar button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 16px;
+  background-color: var(--border);
+  margin: 0 4px;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.code-view-btn {
+  width: auto !important;
+  padding: 0 8px !important;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border) !important;
+}
+
+.code-view-btn.is-active {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}

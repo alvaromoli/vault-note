@@ -20,10 +20,10 @@ export const translations: Translations = {
   master_password_placeholder: { es: 'Contraseña maestra', en: 'Master password' },
   
   // UnlockedView
-  sidebar_books: { es: '📚 Libros y Notas', en: '📚 Books and Notes' },
-  sidebar_secrets: { es: '🔑 Secretos', en: '🔑 Secrets' },
-  sidebar_settings: { es: '⚙️ Configuración', en: '⚙️ Settings' },
-  sidebar_trash: { es: '🗑️ Papelera', en: '🗑️ Trash' },
+  sidebar_books: { es: 'Libros y Notas', en: 'Books and Notes' },
+  sidebar_secrets: { es: 'Credenciales', en: 'Credentials' },
+  sidebar_settings: { es: 'Configuración', en: 'Settings' },
+  sidebar_trash: { es: 'Papelera', en: 'Trash' },
   lock_vault_tooltip: { es: 'Bloquear Bóveda', en: 'Lock Vault' },
   
   // NotesView
@@ -53,7 +53,7 @@ export const translations: Translations = {
   username_label: { es: 'Usuario / Email', en: 'Username / Email' },
   password_label: { es: 'Contraseña', en: 'Password' },
   url_label: { es: 'URL', en: 'URL' },
-  notes_label: { es: 'Notas', en: 'Notes' },
+  notes_label: { es: 'Observación', en: 'Observation' },
   password_generator_title: { es: 'Generador de contraseñas', en: 'Password Generator' },
   generate_btn: { es: 'Generar', en: 'Generate' },
   use_btn: { es: 'Usar', en: 'Use' },
@@ -85,6 +85,9 @@ export const translations: Translations = {
   // Trash
   trash_title: { es: 'Papelera de Reciclaje', en: 'Recycle Bin' },
   trash_empty: { es: 'La papelera está vacía', en: 'Trash is empty' },
+  tasks_empty: { es: 'No hay tareas pendientes', en: 'No pending tasks' },
+  favorites_empty: { es: 'No hay notas favoritas', en: 'No favorite notes' },
+  notes_empty: { es: 'No se encontraron notas', en: 'No notes found' },
   restore_btn: { es: 'Restaurar', en: 'Restore' },
   delete_perm_btn: { es: 'Eliminar Permanentemente', en: 'Delete Permanently' },
   confirm_delete_perm: { es: '¿Estás seguro? Esta acción no se puede deshacer.', en: 'Are you sure? This action cannot be undone.' },
@@ -94,7 +97,30 @@ export const translations: Translations = {
   // Auto-save
   saving_status: { es: 'Guardando...', en: 'Saving...' },
   saved_status: { es: 'Guardado', en: 'Saved' },
+
+  // New UI Components
+  sidebar_all_notes: { es: 'Todas las Notas', en: 'All Notes' },
+  sidebar_favorites: { es: 'Favoritos', en: 'Favorites' },
+  sidebar_pinned: { es: 'Fijados', en: 'Pinned' },
+  sidebar_tasks: { es: 'Tareas', en: 'Tasks' },
+  sidebar_uncategorized: { es: 'Sin Categoría', en: 'Uncategorized' },
+  sidebar_notebooks: { es: 'LIBROS', en: 'NOTEBOOKS' },
+  sidebar_quick_access: { es: 'ACCESO RÁPIDO', en: 'QUICK ACCESS' },
   
+  topbar_search_all: { es: 'Buscar en todas las notas...', en: 'Search all notes...' },
+  topbar_search_in_book: { es: 'Buscar en este libro...', en: 'Search in this book...' },
+  topbar_new_note: { es: 'Nueva Nota', en: 'New Note' },
+  
+  editor_code_view: { es: 'Código', en: 'Code' },
+  editor_last_modified: { es: 'Última modificación', en: 'Last modified' },
+  editor_words: { es: 'palabras', en: 'words' },
+  editor_chars: { es: 'caracteres', en: 'characters' },
+  editor_pin_note: { es: 'Fijar Nota', en: 'Pin Note' },
+  editor_favorite_note: { es: 'Favorito', en: 'Favorite' },
+  editor_trash_note: { es: 'Mover a la papelera', en: 'Move to trash' },
+
+  lock_screen_create_vault: { es: 'Crear Bóveda', en: 'Create Vault' },
+  lock_screen_confirm_password: { es: 'Confirmar contraseña', en: 'Confirm password' },
 };
 
 interface LanguageContextType {

@@ -115,6 +115,14 @@ Para más detalles sobre la implementación criptográfica y el modelo de amenaz
 
 ## 📜 Version History / Historial de Versiones
 
+### [v1.2.0] - 2026-05-14
+**Modernization & UX Overhaul / Modernización y Mejoras de UX:**
+- **Centralized Modal System**: Replaced all native browser dialogs (alert, confirm, prompt) with premium custom modals. / Sistema de modales centralizado que reemplaza diálogos nativos por ventanas personalizadas premium.
+- **Categorization 2.0**: Added note relocation features directly from the editor header. / Reubicación de notas entre libros directamente desde el encabezado del editor.
+- **Terminology Update**: Standardized "Notebooks" to "Libros" in Spanish for a more natural feel. / Cambio de terminología a "Libros" para una experiencia más natural.
+- **UI Refinement**: Redesigned editor header with custom dropdowns, refined typography, and better layout balance. / Rediseño del encabezado del editor con menús desplegables personalizados y tipografía refinada.
+- **Stability Fixes**: Resolved issues with task persistence, selection resets, and navigation loops. / Corrección de errores en la persistencia de tareas y reseteo de selección durante la navegación.
+
 ### [v0.1.0] - 2026-05-12
 **Added / Añadido:**
 - **Markdown Support**: Rich text editing with split-view and code highlighting. / Soporte para Markdown con vista dividida y resaltado de código.

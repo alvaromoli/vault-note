@@ -1,16 +1,42 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import type { Credential } from '../types';
+import { 
+  Shield, Plus, Copy, Eye, EyeOff, Save, Trash2, Key, Globe, User, FileText, RefreshCw, Tag as TagIcon 
+} from 'lucide-react';
 import { useLanguage } from '../i18n';
 import './SecretsView.css';
 
-export function SecretsView() {
+interface SecretsViewProps {
+  searchQuery?: string;
+  selectedTag?: string | null;
+  onShowConfirm: (title: string, message: string, onConfirm: () => void, type?: 'confirm' | 'danger') => void;
+}
+
+export function SecretsView({ searchQuery = '', selectedTag = null, onShowConfirm }: SecretsViewProps) {
   const [secrets, setSecrets] = useState<Credential[]>([]);
   const [selectedSecret, setSelectedSecret] = useState<Credential | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState('');
   const { t } = useLanguage();
+
+  const filteredSecrets = useMemo(() => {
+    let result = (secrets || []);
+    
+    if (selectedTag) {
+      result = result.filter(s => s.tags?.includes(selectedTag));
+    }
+    
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(s => 
+        s.name.toLowerCase().includes(q) || 
+        s.username.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [secrets, searchQuery, selectedTag]);
 
   useEffect(() => {
     loadSecrets();
@@ -37,6 +63,7 @@ export function SecretsView() {
       passwordStr: '',
       url: '',
       notes: '',
+      tags: [],
       createdAt: Date.now(),
       updatedAt: Date.now()
     };
@@ -80,15 +107,21 @@ export function SecretsView() {
 
   const handleDeleteSecret = async () => {
     if (!selectedSecret || !selectedSecret.id) return;
-    if (!confirm(t('confirm_delete_secret'))) return;
     
-    try {
-      await invoke('trash_item', { id: selectedSecret.id });
-      setSecrets(secrets.filter(s => s.id !== selectedSecret.id));
-      setSelectedSecret(null);
-    } catch (e) {
-      console.error('Error trashing secret', e);
-    }
+    onShowConfirm(
+      'Mover a la papelera',
+      '¿Mover esta credencial a la papelera?',
+      async () => {
+        try {
+          await invoke('trash_item', { id: selectedSecret!.id! });
+          setSecrets(secrets.filter(s => s.id !== selectedSecret!.id));
+          setSelectedSecret(null);
+        } catch (e) {
+          console.error('Error trashing secret', e);
+        }
+      },
+      'danger'
+    );
   };
 
   const handleCopyPassword = async (pwd: string) => {
@@ -112,6 +145,8 @@ export function SecretsView() {
     setGeneratedPassword(pwd);
   };
 
+
+
   return (
     <div className="secrets-view">
       <div className="secrets-list-panel glass-panel">
@@ -120,18 +155,28 @@ export function SecretsView() {
           <button onClick={handleCreateSecret} className="icon-btn">+</button>
         </div>
         <div className="list-container">
-          {secrets.map(s => (
-            <div 
-              key={s.id} 
-              className={`list-item ${selectedSecret?.id === s.id ? 'active' : ''}`}
-              onClick={() => {
-                setSelectedSecret(s);
-                setShowPassword(false);
-              }}
-            >
-              🔑 {s.name || 'Sin título'}
-            </div>
-          ))}
+          {filteredSecrets.length === 0 ? (
+            <div className="empty-msg">{t('notes_empty')}</div>
+          ) : (
+            filteredSecrets.map(s => (
+              <div 
+                key={s.id} 
+                className={`list-item ${selectedSecret?.id === s.id ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedSecret(s);
+                  setShowPassword(false);
+                }}
+              >
+                <div className="list-item-icon">
+                  <Shield size={16} />
+                </div>
+                <div className="list-item-content">
+                  <span className="secret-name">{s.name || t('new_credential_default_title')}</span>
+                  <span className="secret-user">{s.username || '...'}</span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -146,50 +191,71 @@ export function SecretsView() {
             />
             
             <div className="form-group">
-              <label>{t('username_label')}</label>
+              <label><User size={14} /> {t('username_label')}</label>
               <input 
+                className="secret-input"
                 value={selectedSecret.username}
                 onChange={e => setSelectedSecret({...selectedSecret, username: e.target.value})}
               />
             </div>
             
             <div className="form-group">
-              <label>{t('password_label')}</label>
+              <label><Key size={14} /> {t('password_label')}</label>
               <div className="password-input-group">
                 <input 
                   type={showPassword ? "text" : "password"}
                   value={selectedSecret.passwordStr}
                   onChange={e => setSelectedSecret({...selectedSecret, passwordStr: e.target.value})}
+                  className="secret-input"
                 />
-                <button onClick={() => setShowPassword(!showPassword)} title="Mostrar/Ocultar">
-                  {showPassword ? "👁️‍🗨️" : "👁️"}
+                <button className="icon-btn-small" onClick={() => setShowPassword(!showPassword)} title="Mostrar/Ocultar">
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
-                <button onClick={() => handleCopyPassword(selectedSecret.passwordStr)} title="Copiar al portapapeles">
-                  📋
+                <button className="icon-btn-small" onClick={() => handleCopyPassword(selectedSecret.passwordStr)} title="Copiar al portapapeles">
+                  <Copy size={16} />
                 </button>
               </div>
             </div>
 
             <div className="form-group">
-              <label>{t('url_label')}</label>
+              <label><Globe size={14} /> {t('url_label')}</label>
               <input 
+                className="secret-input"
                 value={selectedSecret.url}
                 onChange={e => setSelectedSecret({...selectedSecret, url: e.target.value})}
               />
             </div>
 
             <div className="form-group">
-              <label>{t('notes_label')}</label>
+              <label><FileText size={14} /> {t('notes_label')}</label>
               <textarea 
+                className="secret-input"
                 value={selectedSecret.notes}
                 onChange={e => setSelectedSecret({...selectedSecret, notes: e.target.value})}
                 rows={4}
               />
             </div>
+            
+            <div className="form-group">
+              <label><TagIcon size={14} /> TAGS</label>
+              <input 
+                className="secret-input"
+                value={(selectedSecret.tags || []).join(', ')}
+                onChange={e => {
+                  const tags = e.target.value.split(',').map(t => t.trim()).filter(t => t !== '');
+                  setSelectedSecret({...selectedSecret, tags});
+                }}
+                placeholder="Añadir etiquetas (separadas por comas)..."
+              />
+            </div>
 
             <div className="actions-bar">
-              <button className="btn-danger" onClick={handleDeleteSecret}>{t('delete')}</button>
-              <button onClick={handleSaveSecret}>{t('save_changes')}</button>
+              <button className="btn-danger-outline" onClick={handleDeleteSecret}>
+                <Trash2 size={16} /> {t('delete')}
+              </button>
+              <button className="btn-primary" onClick={handleSaveSecret}>
+                <Save size={16} /> {t('save_changes')}
+              </button>
             </div>
             
             <hr className="divider" />
@@ -197,23 +263,30 @@ export function SecretsView() {
             <div className="generator-section">
               <h4>{t('password_generator_title')}</h4>
               <div className="password-input-group">
-                <input type="text" readOnly value={generatedPassword} placeholder="..." />
-                <button onClick={generatePassword}>{t('generate_btn')}</button>
+                <input type="text" readOnly value={generatedPassword} placeholder="..." className="secret-input" />
+                <button className="btn-secondary" onClick={generatePassword}>
+                  <RefreshCw size={16} /> {t('generate_btn')}
+                </button>
                 <button 
+                  className="btn-primary"
                   onClick={() => {
                     handleCopyPassword(generatedPassword);
                     if(selectedSecret) setSelectedSecret({...selectedSecret, passwordStr: generatedPassword});
                   }}
                   disabled={!generatedPassword}
                 >
-                  {t('use_btn')}
+                  <Key size={16} /> {t('use_btn')}
                 </button>
               </div>
             </div>
           </div>
         ) : (
           <div className="empty-state">
-            <p>{t('select_secret_first')}</p>
+            <div className="empty-icon-wrapper">
+              <Shield size={48} strokeWidth={1} />
+            </div>
+            <h3>Gestión de Credenciales</h3>
+            <p>Selecciona una credencial de la lista para ver o editar sus detalles de seguridad.</p>
           </div>
         )}
       </div>

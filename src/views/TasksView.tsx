@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import type { Task } from '../types';
 import { 
-  CheckSquare, Plus, Trash2, Calendar, Flag, Tag, Check, Save 
+  CheckSquare, Plus, Trash2, Calendar, Flag, Tag, Check 
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import './TasksView.css';

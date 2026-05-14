@@ -3,7 +3,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import type { Credential } from '../types';
 import { 
-  Shield, Plus, Copy, Eye, EyeOff, Save, Trash2, Key, Globe, User, FileText, RefreshCw, Tag as TagIcon 
+  Shield, Copy, Eye, EyeOff, Save, Trash2, Key, Globe, User, FileText, RefreshCw, Tag as TagIcon 
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import './SecretsView.css';

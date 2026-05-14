@@ -9,7 +9,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import DOMPurify from 'dompurify';
 import type { Note, Book } from '../types';
 import { HtmlEditorToolbar } from './HtmlEditorToolbar';
-import { Star, Pin, Trash2, Tag, FileText, Folder, ChevronDown } from 'lucide-react';
+import { Star, Pin, Trash2, FileText, Folder, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import './HtmlNoteEditor.css';
 

@@ -3,7 +3,7 @@ import { useLanguage } from '../i18n';
 import type { Book as BookType } from '../types';
 import { 
   FileText, Star, Pin, CheckSquare, Inbox, Shield, Trash2, 
-  Folder, Plus, Tag as TagIcon
+  Folder, Plus
 } from 'lucide-react';
 import './Sidebar.css';
 

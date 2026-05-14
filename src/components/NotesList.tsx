@@ -9,6 +9,7 @@ interface NotesListProps {
   onSelectNote: (note: Note) => void;
   selectedBook: Book | null;
   selectedFilter: string;
+  selectedTag: string | null;
 }
 
 export function NotesList({
@@ -16,7 +17,8 @@ export function NotesList({
   selectedNote,
   onSelectNote,
   selectedBook,
-  selectedFilter
+  selectedFilter,
+  selectedTag
 }: NotesListProps) {
   const { t } = useLanguage();
   // Strip HTML for excerpt
@@ -28,6 +30,7 @@ export function NotesList({
   };
 
   const getContextTitle = () => {
+    if (selectedTag) return `# ${selectedTag}`;
     if (selectedBook) return selectedBook.title;
     switch (selectedFilter) {
       case 'all': return t('sidebar_all_notes');

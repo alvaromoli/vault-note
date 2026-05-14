@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { 
-  Trash2, RotateCcw, FileText, Folder, Shield, AlertTriangle, Trash, CheckSquare 
+  Trash2, RotateCcw, FileText, Folder, Shield, Trash, CheckSquare 
 } from 'lucide-react';
 import { useLanguage } from '../i18n';
 import './TrashView.css';

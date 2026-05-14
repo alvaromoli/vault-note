@@ -371,6 +371,8 @@ export function AppShell({ isLocked, onLock, onUnlock }: AppShellProps) {
         notes={notes}
         secrets={secrets}
         tasks={tasks}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
         isSidebarOpen={isSidebarOpen}
       />
 

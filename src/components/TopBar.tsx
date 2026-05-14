@@ -30,8 +30,7 @@ export function TopBar({
   onNavigate,
   notes,
   secrets,
-  tasks,
-  isSidebarOpen
+  tasks
 }: TopBarProps) {
   const { t } = useLanguage();
   const [localQuery, setLocalQuery] = useState('');
